@@ -6,6 +6,8 @@ import { pencilRotation } from './pencilRotate';
 
 let { pencilObj } = data;
 
+
+
 function App() {
   const canvasRef = useRef(null);
 
@@ -14,6 +16,16 @@ function App() {
   const image = new Image();
   image.src = 'pencil.png';
 
+  const handleCanvasClick=(event)=>{
+    if (!pencilObj.gameStart) {
+      pencilObj.gameStart = true;
+    } else {
+      pencilObj.gameStart = false;
+      pencilObj.speed = 1;
+    }
+    
+  }
+
   useEffect(()=>{
     const render = () => {
       const canvas = canvasRef.current;
@@ -21,12 +33,20 @@ function App() {
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // ctx.save();
-      pencilRotation(ctx, pencilObj, image);
-      // ctx.restore();
+      ctx.save();
 
-      // ctx.fillStyle = 'red';
-      // ctx.fillRect(80, 60, 140, 30);
+      if (pencilObj.speed === 0) {
+        ctx.font = "30px Arial";
+        ctx.fillText("다시 플레이하려면 클릭!", 70, 430);
+      }
+
+      if (pencilObj.gameStart){
+        pencilRotation(ctx, pencilObj, image);
+      } else {
+        ctx.font = "30px Arial";
+        ctx.fillText("연필을 클릭하시면 돕니다!", 70, 430);
+      }
+      console.log(pencilObj.gameStart);
 
       // image.onload = () => {
       //   ctx.drawImage(image, pencilObj.x, pencilObj.y, pencilObj.width, pencilObj.height);
@@ -34,6 +54,7 @@ function App() {
 
       // Pencil draw
       ctx.drawImage(image, pencilObj.x, pencilObj.y, pencilObj.width, pencilObj.height);
+      ctx.restore();
 
       requestAnimationFrame(render);
 
@@ -54,6 +75,7 @@ function App() {
           <canvas 
             id="canvas"
             ref = {canvasRef}
+            onClick={handleCanvasClick}
             height="500px" 
             width="500px" />
         </div>
